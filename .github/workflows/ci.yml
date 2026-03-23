@@ -10,31 +10,41 @@ on:
       - "master"
       - "6.x"
 
+permissions:
+  contents: read
+
 env:
-  gradle-version: "7.5.1"
-  java-version: "14"
+  java-version: "21"
 
 jobs:
   build:
     runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
     steps:
       - name: "Checkout repository"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v4"
       - name: "Set up JDK"
-        uses: "actions/setup-java@v1"
+        uses: "actions/setup-java@v4"
         with:
           java-version: "${{ env.java-version }}"
+          distribution: "temurin"
       - name: "Gradle build"
-        uses: "eskatos/gradle-command-action@v1"
-        with:
-          gradle-version: "${{ env.gradle-version }}"
-          arguments: "clean build --stacktrace"
-      - name: The job has failed
+        uses: "gradle/actions/setup-gradle@v4"
+      - name: "Run build"
+        run: "./gradlew clean build --stacktrace"
+      - name: "Collect reaper logs on failure"
         if: ${{ failure() }}
-        run: cat /home/runner/work/fastfilter-elasticsearch-plugin/fastfilter-elasticsearch-plugin/.gradle/reaper/*/*
-      - name: "GitHub release"
-        if: "contains('refs/heads/master refs/heads/6.x', github.ref)"
         run: |
-          version=$(cat gradle.properties | grep -e "^version *=" | awk -F" *= *" '{print $NF}')
-          echo ${{ github.token }} | gh auth login --with-token
-          gh release create ${version} ./build/distributions/*.zip
+          find "${GITHUB_WORKSPACE}/.gradle/reaper" -type f 2>/dev/null | while read -r f; do echo "=== $f ==="; cat "$f"; done || true
+      - name: "GitHub release"
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/6.x') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(grep -E '^version[[:space:]]*=' gradle.properties | awk -F'=' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')
+          es_ver=$(grep -E '^elasticsearchVersion[[:space:]]*=' gradle.properties | awk -F'=' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')
+          tag="v${version}"
+          gh release create "${tag}" ./build/distributions/*.zip \
+            --title "${tag}" \
+            --notes "Elasticsearch **${es_ver}** plugin build **${version}**. Install with \`elasticsearch-plugin install\` and the release asset URL (see README)."

@@ -1,10 +1,9 @@
-Filter large lists of integers using ElasticSearch
+Filter large lists of integers using ElasticSearch with RoaringBitmaps
 ===========================================
 
 This filter plugin uses RoaringBitmap to allow efficient filtering with hundreds of thousands (even millions) on ElasticSearch.
 
-Read more here: https://luis-sena.medium.com/improve-elasticsearch-filtering-performance-10x-using-this-plugin-8c6485516c1a
-
+Based on fastfilter-elasticsearch-plugin by Luis Sena, updated for ElasticSearch 9.2
 
 Installation
 ------------
@@ -12,9 +11,8 @@ Installation
 In order to install a stable version of the plugin, 
 run ElasticSearch's `plugin` utility:
 
-    bin/elasticsearch-plugin install https://github.com/lsena/fastfilter-elasticsearch-plugin/releases/download/v7.10.1.1/fastfilter-elasticsearch-plugin-7.10.1.1.zip?raw=true
+    bin/elasticsearch-plugin install https://github.com/derekwsgray/roaringfilter-elasticsearch9-plugin/releases/download/v0.1/roaringfilter-elasticsearch-plugin-0.1.zip?raw=true
 
-You need to choose the correct plugin version to match your ES version (you can find the available versions in the releases github page)
 
 To install from sources (master branch), run:
 
@@ -41,8 +39,8 @@ GET /test/_search
       "filter": {
         "script": {
           "script": {
-            "source": "fast_filter",
-            "lang": "fast_filter",
+            "source": "roaring_filter",
+            "lang": "roaring_filter",
             "params": {
               "field": "filter_id",
               "operation": "include",
@@ -91,8 +89,8 @@ if __name__ == "__main__":
               "filter": {
                 "script": {
                   "script": {
-                    "source": "fast_filter",
-                    "lang": "fast_filter",
+                    "source": "roaring_filter",
+                    "lang": "roaring_filter",
                     "params": {
                       "field": "_id",
                       "operation": "include",

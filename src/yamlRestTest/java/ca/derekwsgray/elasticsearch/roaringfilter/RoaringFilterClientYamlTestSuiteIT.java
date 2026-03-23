@@ -17,17 +17,16 @@
  * under the License.
  */
 
-
-package org.elasticsearch.lsena.fastfilter;
+package ca.derekwsgray.elasticsearch.roaringfilter;
 
 import com.carrotsearch.randomizedtesting.annotations.Name;
 import com.carrotsearch.randomizedtesting.annotations.ParametersFactory;
 import org.elasticsearch.test.rest.yaml.ClientYamlTestCandidate;
 import org.elasticsearch.test.rest.yaml.ESClientYamlSuiteTestCase;
 
-public class FastFilterClientYamlTestSuiteIT extends ESClientYamlSuiteTestCase {
+public class RoaringFilterClientYamlTestSuiteIT extends ESClientYamlSuiteTestCase {
 
-    public FastFilterClientYamlTestSuiteIT(@Name("yaml") ClientYamlTestCandidate testCandidate) {
+    public RoaringFilterClientYamlTestSuiteIT(@Name("yaml") ClientYamlTestCandidate testCandidate) {
         super(testCandidate);
     }
 
@@ -36,4 +35,3 @@ public class FastFilterClientYamlTestSuiteIT extends ESClientYamlSuiteTestCase {
         return ESClientYamlSuiteTestCase.createParameters();
     }
 }
-

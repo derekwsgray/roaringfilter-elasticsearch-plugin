@@ -46,8 +46,8 @@ setup:
               filter:
                 script:
                   script:
-                      source: "fast_filter"
-                      lang: "fast_filter"
+                      source: "roaring_filter"
+                      lang: "roaring_filter"
                       params:
                         operation: "exclude"
                         field: "filter_id"
@@ -68,8 +68,8 @@ setup:
               filter:
                 script:
                   script:
-                      source: "fast_filter"
-                      lang: "fast_filter"
+                      source: "roaring_filter"
+                      lang: "roaring_filter"
                       params:
                         operation: "include"
                         field: "filter_id"
@@ -92,8 +92,8 @@ setup:
               filter:
                 script:
                   script:
-                      source: "fast_filter"
-                      lang: "fast_filter"
+                      source: "roaring_filter"
+                      lang: "roaring_filter"
                       params:
                         operation: "exclude"
                         field: "filter_id"
@@ -115,8 +115,8 @@ setup:
               filter:
                 script:
                   script:
-                      source: "fast_filter"
-                      lang: "fast_filter"
+                      source: "roaring_filter"
+                      lang: "roaring_filter"
                       params:
                         operation: "include"
                         field: "filter_id"

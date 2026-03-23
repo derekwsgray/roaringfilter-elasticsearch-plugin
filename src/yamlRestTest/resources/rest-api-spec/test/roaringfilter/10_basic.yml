@@ -13,4 +13,4 @@
     - do:
         nodes.info: {}
 
-    - contains:  { nodes.$master.plugins: { name: fastfilter-elasticsearch-plugin } }
+    - contains:  { nodes.$master.plugins: { name: roaringfilter-elasticsearch9-plugin } }

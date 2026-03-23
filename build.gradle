@@ -7,9 +7,9 @@
  */
 
 buildscript {
-    ext {
-        es_version = version.replaceAll(/\.[0-9]+$/, "")
-    }
+    def gradleProps = new Properties()
+    new File(projectDir, 'gradle.properties').withInputStream { gradleProps.load(it) }
+    ext.es_version = gradleProps.getProperty('elasticsearchVersion')
     repositories {
         maven {
             url = 'https://snapshots.elastic.co/maven/'
@@ -33,12 +33,11 @@ tasks.withType(JavaCompile) {
 test.enabled = false
 
 esplugin {
-    name pluginName
-    description pluginDescription
-    classname pluginClassname
-    licenseFile rootProject.file("LICENSE.txt")
-    noticeFile rootProject.file("NOTICE.txt")
-
+    name = pluginName
+    description = pluginDescription
+    classname = pluginClassname
+    licenseFile = rootProject.file("LICENSE.txt")
+    noticeFile = rootProject.file("NOTICE.txt")
 }
 
 allprojects {
@@ -50,6 +49,7 @@ allprojects {
 dependencies {
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.35'
 
-    yamlRestTestImplementation "org.apache.logging.log4j:log4j-core:2.17.0"
+    yamlRestTestImplementation "org.apache.logging.log4j:log4j-core:2.19.0"
     yamlRestTestImplementation "org.elasticsearch.test:framework:$es_version"
+    yamlRestTestImplementation "org.elasticsearch.test:yaml-rest-runner:$es_version"
 }

@@ -1,4 +1,7 @@
-fastfilter-elasticsearch-plugin
+roaringfilter-elasticsearch9-plugin
+Copyright 2026 Derek Gray
+
+Based on fastfilter-elasticsearch-plugin
 Copyright 2013-2021 Luis Sena
 
 This product includes software developed by The Apache Software
