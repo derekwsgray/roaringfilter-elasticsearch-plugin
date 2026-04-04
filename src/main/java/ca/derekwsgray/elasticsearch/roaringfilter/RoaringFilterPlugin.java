@@ -43,6 +43,8 @@ import java.util.Set;
 
 /**
  * RoaringBitmap plugin that allows filtering documents using a base64-encoded Roaring Bitmap of integers.
+ * The {@code field} script parameter must be a mapped numeric field (e.g. {@code integer} / {@code long}),
+ * not Elasticsearch document metadata {@code _id}.
  */
 public class RoaringFilterPlugin extends Plugin implements ScriptPlugin {
 

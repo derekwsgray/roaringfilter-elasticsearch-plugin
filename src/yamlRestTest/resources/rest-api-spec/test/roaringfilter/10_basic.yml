@@ -1,4 +1,4 @@
-# Integration tests for the expert scoring script example plugin
+# Integration tests for the roaring bitmap filter script plugin
 #
 "Plugin loaded":
     - skip:

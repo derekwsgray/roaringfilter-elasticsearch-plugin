@@ -1,4 +1,4 @@
-# Integration tests for the expert scoring script example plugin
+# Integration tests for the roaring bitmap filter script plugin
 #
 ---
 setup:
@@ -10,27 +10,27 @@ setup:
       index:
         index:  test
         id:     10
-        body:   { "important_field": "foo", "filter_id": 10 }
+        body:   { "important_field": "foo", "nid": 10 }
   - do:
         index:
           index:  test
           id:     20
-          body:   { "important_field": "foo foo foo", "filter_id": 20 }
+          body:   { "important_field": "foo foo foo", "nid": 20 }
   - do:
         index:
           index:  test
           id:     40
-          body:   { "important_field": "foo foo", "filter_id": 40 }
+          body:   { "important_field": "foo foo", "nid": 40 }
   - do:
         index:
           index:  test
           id:     41
-          body:   { "important_field": "not that important", "filter_id": 41 }
+          body:   { "important_field": "not that important", "nid": 41 }
   - do:
         index:
           index:  test
           id:     42
-          body:   { "important_field": "even less important!", "filter_id": 42 }
+          body:   { "important_field": "even less important!", "nid": 42 }
 
   - do:
       indices.refresh: {}
@@ -50,7 +50,7 @@ setup:
                       lang: "roaring_filter"
                       params:
                         operation: "exclude"
-                        field: "filter_id"
+                        field: "nid"
                         terms: "OjAAAAEAAAAAAAIAEAAAAAoAFAAjAA=="
   - length: { hits.hits: 3 }
   - match: {hits.hits.0._id: "40" }
@@ -72,7 +72,7 @@ setup:
                       lang: "roaring_filter"
                       params:
                         operation: "include"
-                        field: "filter_id"
+                        field: "nid"
                         terms: "OjAAAAEAAAAAAAIAEAAAAAoAFAAjAA=="
   - length: { hits.hits: 2 }
   - match: {hits.hits.0._id: "10" }
@@ -96,7 +96,7 @@ setup:
                       lang: "roaring_filter"
                       params:
                         operation: "exclude"
-                        field: "filter_id"
+                        field: "nid"
                         terms: "OjAAAAEAAAAAAAIAEAAAAAoAFAAjAA=="
   - length: { hits.hits: 1 }
   - match: {hits.hits.0._id: "40" }
@@ -119,7 +119,7 @@ setup:
                       lang: "roaring_filter"
                       params:
                         operation: "include"
-                        field: "filter_id"
+                        field: "nid"
                         terms: "OjAAAAEAAAAAAAIAEAAAAAoAFAAjAA=="
   - length: { hits.hits: 2 }
   - match: {hits.hits.0._id: "20" }

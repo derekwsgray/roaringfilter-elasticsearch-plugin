@@ -42,7 +42,7 @@ GET /test/_search
             "source": "roaring_filter",
             "lang": "roaring_filter",
             "params": {
-              "field": "filter_id",
+              "field": "nid",
               "operation": "include",
               "terms": "OjAAAAEAAAAAAAIAEAAAAAoAFAAjAA=="
             }
@@ -53,7 +53,7 @@ GET /test/_search
   }
 }
 ```
-This will fetch the documents that have a filter_id with the values 10, 20 or 35
+This will fetch documents whose numeric field `nid` is one of 10, 20, or 35. Map `nid` as a numeric type (for example `integer` or `long`) so the plugin can read sorted numeric doc values. This is not Elasticsearch’s document metadata `_id`; use a real mapped field such as `nid`.
 
 Python Example
 -----
@@ -68,12 +68,11 @@ from elasticsearch import Elasticsearch
 
 if __name__ == "__main__":
     es = Elasticsearch()
-    # in the real world, the bitmap serialization would be for a big list
-    # and you could even compute them before and store them for later user
+    # In production, the bitmap often encodes a large id set; you can precompute
+    # and reuse the serialized form.
     bm = BitMap([10, 20, 35])
-    
-    # this will match "foo" in important field
-    # but only for documents that have a filter_id value of 10, 20 or 35
+
+    # Match documents where mapped numeric field `nid` is in the bitmap (not `_id`).
     result = es.search(
         index="user-index", 
         body={
@@ -92,7 +91,7 @@ if __name__ == "__main__":
                     "source": "roaring_filter",
                     "lang": "roaring_filter",
                     "params": {
-                      "field": "_id",
+                      "field": "nid",
                       "operation": "include",
                       "terms": base64.b64encode(BitMap.serialize(bm))
                     }
