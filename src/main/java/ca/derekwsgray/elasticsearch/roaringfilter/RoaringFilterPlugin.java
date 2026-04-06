@@ -42,7 +42,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * RoaringBitmap plugin that allows filtering documents using a base64-encoded Roaring Bitmap of integers.
+ * RoaringBitmap plugin that allows filtering documents using a base64-encoded Roaring Bitmap of
+ * <strong>unsigned 32-bit</strong> integer keys (the same key space as {@link RoaringBitmap}).
+ * The {@code field} script parameter must be a mapped numeric field (e.g. {@code integer} / {@code long}),
+ * not Elasticsearch document metadata {@code _id}.
  */
 public class RoaringFilterPlugin extends Plugin implements ScriptPlugin {
 
@@ -149,11 +152,13 @@ public class RoaringFilterPlugin extends Plugin implements ScriptPlugin {
 					};
 				}
 				return new FilterScript(params, null, docReader) {
+					private boolean hasValue;
+
 					@Override
 					public void setDocument(int docId) {
 						try {
 							super.setDocument(docId);
-							docValues.advance(docId);
+							hasValue = docValues.advanceExact(docId);
 						} catch (IOException e) {
 							throw ExceptionsHelper.convertToElastic(e);
 						}
@@ -162,12 +167,18 @@ public class RoaringFilterPlugin extends Plugin implements ScriptPlugin {
 					@Override
 					public boolean execute() {
 						try {
-							long raw = docValues.nextValue();
-							int docVal = Math.toIntExact(raw);
-							if (exclude && rBitmap.contains(docVal)) {
-								return false;
+							if (hasValue == false) {
+								return exclude;
 							}
-							return !include || rBitmap.contains(docVal);
+							int count = docValues.docValueCount();
+							if (count == 1) {
+								return RoaringBitmapDocValueMatcher.filterResult(include, rBitmap, docValues.nextValue());
+							}
+							long[] values = new long[count];
+							for (int i = 0; i < count; i++) {
+								values[i] = docValues.nextValue();
+							}
+							return RoaringBitmapDocValueMatcher.filterResult(include, rBitmap, values);
 						} catch (IOException e) {
 							throw ExceptionsHelper.convertToElastic(e);
 						}
