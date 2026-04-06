@@ -31,6 +31,11 @@ setup:
           index:  test
           id:     42
           body:   { "important_field": "even less important!", "nid": 42 }
+  - do:
+        index:
+          index:  test
+          id:     99
+          body:   { "important_field": "overflow value", "nid": 3000000000 }
 
   - do:
       indices.refresh: {}
@@ -52,10 +57,11 @@ setup:
                         operation: "exclude"
                         field: "nid"
                         terms: "OjAAAAEAAAAAAAIAEAAAAAoAFAAjAA=="
-  - length: { hits.hits: 3 }
+  - length: { hits.hits: 4 }
   - match: {hits.hits.0._id: "40" }
   - match: {hits.hits.1._id: "41" }
   - match: {hits.hits.2._id: "42" }
+  - match: {hits.hits.3._id: "99" }
 ---
 "document filtering include":
   - do:
