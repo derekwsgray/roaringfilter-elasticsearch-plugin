@@ -29,8 +29,10 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:unchecked,deprecation"
 }
 
-// This plugin only has yaml rest tests
-test.enabled = false
+test {
+    enabled = true
+    useJUnit()
+}
 
 esplugin {
     name = pluginName
@@ -48,6 +50,8 @@ allprojects {
 
 dependencies {
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.35'
+
+    testImplementation 'junit:junit:4.13.2'
 
     yamlRestTestImplementation "org.apache.logging.log4j:log4j-core:2.19.0"
     yamlRestTestImplementation "org.elasticsearch.test:framework:$es_version"
